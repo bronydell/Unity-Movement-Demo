@@ -6,13 +6,14 @@ namespace Demo.MoveBehaviour
     {
         private readonly Vector2 startPoint;
         private readonly Vector2 finishPoint;
-        private readonly float progressPerSpike;
+        private readonly float? progressPerSpike;
 
         public SpikeMoveBehaviour(Vector2 startPoint, Vector2 finishPoint, int spikes)
         {
             this.startPoint = startPoint;
             this.finishPoint = finishPoint;
-            progressPerSpike = 1f / spikes;
+            if (spikes != 0)
+                progressPerSpike = 1f / spikes;
         }
 
         private float GetTriY(float x)
@@ -22,10 +23,14 @@ namespace Demo.MoveBehaviour
 
         public Vector2 GetProgressPosition(float progress)
         {
-            var currentSpike = (int) (progress / progressPerSpike);
-            var spikeProgress = progress - currentSpike * progressPerSpike;
-            var normalizedSpikeProgress = spikeProgress / progressPerSpike;
-            var spikeY = GetTriY(normalizedSpikeProgress);
+            var spikeY = 0f;
+            if (progressPerSpike.HasValue)
+            {
+                var currentSpike = (int)(progress / progressPerSpike.Value);
+                var spikeProgress = progress - currentSpike * progressPerSpike.Value;
+                var normalizedSpikeProgress = spikeProgress / progressPerSpike.Value;
+                spikeY = GetTriY(normalizedSpikeProgress);
+            }
             return Vector2.Lerp(startPoint, finishPoint, progress) + new Vector2(0, spikeY);
         }
     }
