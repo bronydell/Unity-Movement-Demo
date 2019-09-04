@@ -22,14 +22,14 @@ namespace Demo.MoveExecutor
         )
         {
             var timeElapsed = 0f;
-            while (timeElapsed < executionTime)
+            while (timeElapsed <= executionTime && executionTime > 0f)
             {
                 var executionProgress = timeElapsed / executionTime;
                 target.position = move.GetProgressPosition(executionProgress);
                 yield return null;
                 timeElapsed += Time.deltaTime;
             }
-
+            target.position = move.GetProgressPosition(1f);
             onFinish();
         }
     }
